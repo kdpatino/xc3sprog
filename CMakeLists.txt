@@ -130,17 +130,29 @@ ADD_CUSTOM_COMMAND(OUTPUT cables.h
 
 INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
+
+IF(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm") 
 add_library(xc3sproglib  STATIC sysfs.cpp ioftdi.cpp iofx2.cpp 
-                        devicedb.cpp jtag.cpp jedecfile.cpp bitfile.cpp 
-                        iomatrixcreator.cpp iomatrixvoice.cpp iowiringpi.cpp
+      devicedb.cpp jtag.cpp jedecfile.cpp bitfile.cpp 
+      iomatrixcreator.cpp iomatrixvoice.cpp iowiringpi.cpp
 			iobase.cpp  progalgxc95x.cpp utilities.cpp
 			progalgxcf.cpp progalgxcfp.cpp progalgxc3s.cpp
 			progalgavr.cpp progalgxc2c.cpp  mapfile_xc2c.cpp
 			ioxpc.cpp progalgspiflash.cpp bitrev.cpp
-                        cabledb.cpp pdioverjtag.cpp xmega_pdi_nvm.cpp
-                        ${CONDITIONAL_FILES} devices.h cables.h)
+      cabledb.cpp pdioverjtag.cpp xmega_pdi_nvm.cpp
+      ${CONDITIONAL_FILES} devices.h cables.h)
 
 set(LIBS ${LIBS} wiringPiDev wiringPi)
+ELSE(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm")
+add_library(xc3sproglib  STATIC sysfs.cpp ioftdi.cpp iofx2.cpp 
+      devicedb.cpp jtag.cpp jedecfile.cpp bitfile.cpp 
+			iobase.cpp  progalgxc95x.cpp utilities.cpp
+			progalgxcf.cpp progalgxcfp.cpp progalgxc3s.cpp
+			progalgavr.cpp progalgxc2c.cpp  mapfile_xc2c.cpp
+			ioxpc.cpp progalgspiflash.cpp bitrev.cpp
+      cabledb.cpp pdioverjtag.cpp xmega_pdi_nvm.cpp
+      ${CONDITIONAL_FILES} devices.h cables.h)
+ENDIF(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm")
 
 add_executable(xc2c_warp xc2c_warp.cpp)
 target_link_libraries(xc2c_warp xc3sproglib ${CONDITIONAL_LIBS})
@@ -154,8 +166,6 @@ target_link_libraries(xc3sprog xc3sproglib ${LIBFTDI_LIBRARIES}  ${LIBFTD2XX_LIB
 
 add_executable(readdna readdna.cpp devices.h)
 target_link_libraries(readdna xc3sproglib ${LIBFTDI_LIBRARIES}  ${LIBFTD2XX_LIBRARIES} ${CONDITIONAL_LIBS}  ${LIBS} )
-
-
 
 
 install(TARGETS xc3sprog DESTINATION bin)

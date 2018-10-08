@@ -12,9 +12,12 @@
 #include "ioftdi.h"
 #include "ioxpc.h"
 #include "sysfs.h"
+#include "utilities.h"
+
+#ifdef __arm__
 #include "iomatrixcreator.h"
 #include "iomatrixvoice.h"
-#include "utilities.h"
+#endif
 
 extern char *optarg;
 void detect_chain(Jtag *jtag, DeviceDB *db)
@@ -93,6 +96,7 @@ int  getIO( std::auto_ptr<IOBase> *io, struct cable_t * cable, char const *dev,
       io->get()->setVerbose(verbose);
       res = io->get()->Init(cable, serial, use_freq);
   }
+#ifdef __arm__
   else if(cable->cabletype == CABLE_MATRIX_CREATOR)
   {
       io->reset(new IOMatrixCreator());
@@ -105,6 +109,7 @@ int  getIO( std::auto_ptr<IOBase> *io, struct cable_t * cable, char const *dev,
       io->get()->setVerbose(verbose);
       res = io->get()->Init(cable, serial, use_freq);
   }
+#endif
   else
   {
       fprintf(stderr, "Unknown Cable \"%s\" \n", getCableName(cable->cabletype));
